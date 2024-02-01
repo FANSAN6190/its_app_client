@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, SafeAreaView, Button, TextInput, Image, Alert } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Button, TextInput, Image, Alert , Modal} from 'react-native';
 import * as ImagePicker from "expo-image-picker";
 import { SelectCountry } from 'react-native-element-dropdown';
 
@@ -41,10 +41,37 @@ const local_data = [
   },
 ];
 
+const subCategoryData = [
+   {
+    value: '1.1',
+    label: 'Biodegradabale',
+    image: {
+      uri: 'https://www.vigcenter.com/public/all/images/default-image.jpg',
+    },
+  },
+
+   {
+    value: '1.2',
+    label: 'Non-biodegradabale',
+    image: {
+      uri: 'https://www.vigcenter.com/public/all/images/default-image.jpg',
+    },
+  },
+
+
+  ];
+  
+
 function Home() {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
    const [isClicked, setIsClicked] = useState(false);
   const [file, setFile] = useState(null);
+  const [isMainCatSelected, setIsMainCatSelected] = useState(null);
+  const [text, onChangeText] = React.useState('');
+  
+    const [value, setValue] = useState(null);
+  // const [number, onChangeNumber] = React.useState('');
+
 
   // Stores any error message
   const [error, setError] = useState(null);
@@ -76,9 +103,16 @@ function Home() {
     }
   };
 
+ 
   const openDescription = () => {
     // Handle description opening here
     setIsClicked(!isClicked);
+  };
+
+    const openSubCategory = () => {
+      // Handle description opening here
+    setIsMainCatSelected(!isMainCatSelected);
+      
   };
 
   return (
@@ -101,35 +135,56 @@ function Home() {
           imageField="image"
           placeholder="Select category"
           searchPlaceholder="Search..."
-          onChange={() => {}}
-          onOpen={() => setIsDropdownVisible(true)}
-          onClose={() => setIsDropdownVisible(false)}
+          onChange={item => {
+          setValue(item.value);
+          console.log(item.label);
+        }}
+        //  onChange={(value) => (value)}
+        onOpen={() => setIsDropdownVisible(true)}
+        onClose={() => setIsDropdownVisible(false)}
         />
       </View>
 
+      
+    
       <Button
         style={{ width: "100%" }}
-        color="orange"
-        title="Upload image"
-        onPress={pickImage}
-      />
-      <Button
-        style={{ width: "100%" }}
-        color="orange"
+        color="#436850"
         title="Description"
         onPress={openDescription}
-      />
+        />
+      <Button
+        style={{ width: "100%" }}
+        color="#436850"
+        title="Upload image"
+        onPress={pickImage}
+        />
       {isClicked ? (
         <View style={styles.description_popup}>
           <TextInput
             placeholder="Write the description here."
+            onChangeText={newText=>onChangeText(newText)}
             style={styles.description_input}
-          />
+            defaultValue={text}
+            // console.log(text);
+            />
+
+ <Text style={{padding: 100, fontSize: 50}}>
+            {text
+              // console.log(text);
+            }
+            
+      </Text>
         </View>
       ) : null}
-      {isDropdownVisible && (
+
+      {/* {isDropdownVisible && (
         <View style={styles.dropdownOverlay} onTouchEnd={() => setIsDropdownVisible(false)} />
-      )}
+      )} */}
+ 
+     
+      
+
 
       {file ? (
         // Display the selected image
@@ -148,7 +203,7 @@ function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'pink',
+    backgroundColor: '#ADBC9F',
     paddingTop: 70,
   },
   heading: {
@@ -160,7 +215,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     // alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: 'orange',
+    backgroundColor: '#436850',
     padding: 10,
     // margin: 10,
     borderRadius: 5,
@@ -174,7 +229,7 @@ const styles = StyleSheet.create({
   dropdown: {
     flex: 1,
     // height: 50,
-    backgroundColor: 'orange',
+    backgroundColor: '#436850',
     borderRadius: 90,
     paddingHorizontal: 8,
   },
@@ -225,6 +280,22 @@ const styles = StyleSheet.create({
     borderColor: "#8e8e8e",
     alignSelf: "center",
   },
+
+  // subCategoryView: {
+  //      width: "50%",
+  //   backgroundColor: "pink",
+  //   height: 30,
+  //   alignSelf:"centr",
+    
+  // },
+
+  // dropdownSubcatContainer: {
+  //      width: "50%",
+  //   // backgroundColor: "pink",
+  //   height: 30,
+  //   alignSelf:"center",
+    
+  // }
 });
 
 export default Home;
