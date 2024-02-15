@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, SafeAreaView, Button, TextInput, Image, Alert , Modal} from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Button, TextInput, Image, Alert , Modal, Pressable} from 'react-native';
 import * as ImagePicker from "expo-image-picker";
 import { SelectCountry } from 'react-native-element-dropdown';
 
@@ -41,7 +41,7 @@ const local_data = [
   },
 ];
 
-const subCategoryData = [
+const garbageSubCatData = [
    {
     value: '1.1',
     label: 'Biodegradabale',
@@ -66,8 +66,11 @@ function Home() {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
    const [isClicked, setIsClicked] = useState(false);
   const [file, setFile] = useState(null);
-  const [isMainCatSelected, setIsMainCatSelected] = useState(null);
+  const [isMainCatSelected, setIsMainCatSelected] = useState(false);
   const [text, onChangeText] = React.useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+
+ 
   
     const [value, setValue] = useState(null);
   // const [number, onChangeNumber] = React.useState('');
@@ -115,8 +118,66 @@ function Home() {
       
   };
 
+  const saveSelectedCat = () => {
+    
+  }
+
   return (
     <SafeAreaView style={styles.container}>
+
+       <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalVisible(!modalVisible);
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            
+      {modalVisible ? (
+      <View style={styles.dropdownContainer}>
+        {/* <Text style={styles.selectCategoryText}>Select category</Text> */}
+        <SelectCountry
+          style={styles.dropdown}
+          selectedTextStyle={styles.selectedTextStyle}
+          placeholderStyle={styles.placeholderStyle}
+          imageStyle={styles.imageStyle}
+          iconStyle={styles.iconStyle}
+          maxHeight={200}
+          value={'1'}
+          data={garbageSubCatData}
+          valueField="value"
+          labelField="label"
+          imageField="image"
+          placeholder="Select category"
+          searchPlaceholder="Search..."
+          onChange={item => {
+            setValue(item.value);
+            console.log(item.label);
+            // openDescription();
+            // setModalVisible(!modalVisible);
+            
+          }}
+        //  onChange={(value) => (value)}
+        // onOpen={() => setIsDropdownVisible(true)}
+        // onClose={() => setIsDropdownVisible(false)}
+        />
+      </View>
+
+      )
+          : null}
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => setModalVisible(!modalVisible)}>
+                <Text>Close</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+
       <Text style={styles.heading}>Submit a new concern</Text>
 
       <View style={styles.dropdownContainer}>
@@ -136,9 +197,13 @@ function Home() {
           placeholder="Select category"
           searchPlaceholder="Search..."
           onChange={item => {
-          setValue(item.value);
-          console.log(item.label);
-        }}
+            setValue(item.value);
+            console.log(item.label);
+            // openDescription();
+            setModalVisible(!modalVisible);
+            saveSelectedCat(item.label);
+            
+          }}
         //  onChange={(value) => (value)}
         onOpen={() => setIsDropdownVisible(true)}
         onClose={() => setIsDropdownVisible(false)}
@@ -167,7 +232,8 @@ function Home() {
             style={styles.description_input}
             defaultValue={text}
             // console.log(text);
-            />
+          />
+          
 
  <Text style={{padding: 100, fontSize: 50}}>
             {text
@@ -177,6 +243,10 @@ function Home() {
       </Text>
         </View>
       ) : null}
+
+
+
+      {/* {isMainCatSelected?():null} */}
 
       {/* {isDropdownVisible && (
         <View style={styles.dropdownOverlay} onTouchEnd={() => setIsDropdownVisible(false)} />
@@ -281,7 +351,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
 
-  // subCategoryView: {
+  // subCatView: {
   //      width: "50%",
   //   backgroundColor: "pink",
   //   height: 30,
@@ -289,13 +359,33 @@ const styles = StyleSheet.create({
     
   // },
 
-  // dropdownSubcatContainer: {
-  //      width: "50%",
-  //   // backgroundColor: "pink",
-  //   height: 30,
-  //   alignSelf:"center",
-    
-  // }
+
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
 });
 
 export default Home;
