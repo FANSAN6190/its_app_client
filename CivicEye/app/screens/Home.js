@@ -20,25 +20,12 @@ const local_data = [
   },
   {
     value: '2',
-    label: 'Infrastructure',
+    label: 'City Maintenance',
     image: {
       uri: 'https://www.vigcenter.com/public/all/images/default-image.jpg',
     },
   },
-  {
-    value: '3',
-    label: 'Animals',
-    image: {
-      uri: 'https://www.vigcenter.com/public/all/images/default-image.jpg',
-    },
-  },
-  {
-    value: '4',
-    label: 'Something',
-    image: {
-      uri: 'https://www.vigcenter.com/public/all/images/default-image.jpg',
-    },
-  },
+
 ];
 
 const garbageSubCatData = [
@@ -58,6 +45,24 @@ const garbageSubCatData = [
     },
   },
 
+];
+  
+const citySubCatData = [
+   {
+    value: '2.1',
+    label: 'Water leakage',
+    image: {
+      uri: 'https://www.vigcenter.com/public/all/images/default-image.jpg',
+    },
+  },
+
+   {
+    value: '2.2',
+    label: 'Broken infrastructure',
+    image: {
+      uri: 'https://www.vigcenter.com/public/all/images/default-image.jpg',
+    },
+  },
 
   ];
   
@@ -69,10 +74,8 @@ function Home() {
   const [isMainCatSelected, setIsMainCatSelected] = useState(false);
   const [text, onChangeText] = React.useState('');
   const [modalVisible, setModalVisible] = useState(false);
-
- 
-  
-    const [value, setValue] = useState(null);
+  const [mainCatSelected, mainCatValue] = React.useState('');
+  const [value, setValue] = useState(null);
   // const [number, onChangeNumber] = React.useState('');
 
 
@@ -136,8 +139,11 @@ function Home() {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             
-      {modalVisible ? (
-      <View style={styles.dropdownContainer}>
+
+
+
+      {modalVisible && mainCatSelected === "Garbage" ? (
+      <View style={styles.subCatContainer}>
         {/* <Text style={styles.selectCategoryText}>Select category</Text> */}
         <SelectCountry
           style={styles.dropdown}
@@ -160,14 +166,53 @@ function Home() {
             // setModalVisible(!modalVisible);
             
           }}
-        //  onChange={(value) => (value)}
-        // onOpen={() => setIsDropdownVisible(true)}
-        // onClose={() => setIsDropdownVisible(false)}
+   
         />
       </View>
 
       )
-          : null}
+              : null}
+            
+
+
+             {modalVisible && mainCatSelected === "City Maintenance" ? (
+      <View style={styles.subCatContainer}>
+        {/* <Text style={styles.selectCategoryText}>Select category</Text> */}
+        <SelectCountry
+          style={styles.dropdown}
+          selectedTextStyle={styles.selectedTextStyle}
+          placeholderStyle={styles.placeholderStyle}
+          imageStyle={styles.imageStyle}
+          iconStyle={styles.iconStyle}
+          maxHeight={200}
+          value={'2'}
+          data={citySubCatData}
+          valueField="value"
+          labelField="label"
+          imageField="image"
+          placeholder="Select category"
+          searchPlaceholder="Search..."
+          onChange={item => {
+            setValue(item.value);
+            console.log(item.label);
+            // openDescription();
+            // setModalVisible(!modalVisible);
+            
+          }}
+   
+        />
+      </View>
+
+      )
+              : null}
+            
+            
+
+
+
+
+
+
             <Pressable
               style={[styles.button, styles.buttonClose]}
               onPress={() => setModalVisible(!modalVisible)}>
@@ -202,16 +247,18 @@ function Home() {
             // openDescription();
             setModalVisible(!modalVisible);
             saveSelectedCat(item.label);
+            mainCatValue(item.label);
+            // console.log(mainCatSelected, "f");
             
+            // console.log("Main category value:", mainCatValue)
           }}
         //  onChange={(value) => (value)}
         onOpen={() => setIsDropdownVisible(true)}
         onClose={() => setIsDropdownVisible(false)}
         />
       </View>
-
       
-    
+
       <Button
         style={{ width: "100%" }}
         color="#436850"
@@ -231,8 +278,7 @@ function Home() {
             onChangeText={newText=>onChangeText(newText)}
             style={styles.description_input}
             defaultValue={text}
-            // console.log(text);
-          />
+            />
           
 
  <Text style={{padding: 100, fontSize: 50}}>
@@ -246,13 +292,6 @@ function Home() {
 
 
 
-      {/* {isMainCatSelected?():null} */}
-
-      {/* {isDropdownVisible && (
-        <View style={styles.dropdownOverlay} onTouchEnd={() => setIsDropdownVisible(false)} />
-      )} */}
- 
-     
       
 
 
@@ -304,14 +343,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   // imageContainer: {
-  //   height: 100,
-  //   width: 100,
-  // },
-  // image: {
-  //   width: 200,
-  //   height: 200,
-  //   borderRadius: 8,
-  // },
+
   dropdownOverlay: {
     flex: 1,
     position: 'absolute',
@@ -334,10 +366,7 @@ const styles = StyleSheet.create({
     color: "#000",  // Set selected text color to black
   },
   
-  // iconStyle: {
-  //   width: 20,
-  //   height: 20,
-  // },
+ 
 
     description_popup: {
     width: "50%",
@@ -351,13 +380,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
 
-  // subCatView: {
-  //      width: "50%",
-  //   backgroundColor: "pink",
-  //   height: 30,
-  //   alignSelf:"centr",
-    
-  // },
 
 
   centeredView: {
@@ -385,6 +407,17 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     elevation: 2,
+  },
+
+  subCatContainer: {
+     flexDirection: 'row',
+    // alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#436850',
+    padding: 10,
+    // margin: 10,
+    borderRadius: 5,
+    // color:"orange"
   },
 });
 
