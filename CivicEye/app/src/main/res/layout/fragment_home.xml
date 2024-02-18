@@ -6,50 +6,136 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
+
     <LinearLayout
-        android:layout_width="387dp"
-        android:layout_height="730dp"
+        android:layout_width="384dp"
+        android:layout_height="722dp"
         android:orientation="vertical"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="16dp">
+        tools:layout_editor_absoluteX="13dp"
+        tools:layout_editor_absoluteY="4dp">
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="222dp"
-            android:layout_height="30dp"
-            android:text="TextViewSelect Category of Issue" />
-
-        <Spinner
-            android:id="@+id/spinner1"
-            android:layout_width="392dp"
-            android:layout_height="28dp"
-
-            android:layout_marginBottom="20dp" />
-
-        <TextView
-            android:id="@+id/textView2"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Select Subcategory" />
+            android:layout_height="784dp">
 
-        <AutoCompleteTextView
-            android:id="@+id/autoCompleteTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <Button
-            android:id="@+id/submitButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Submit" />
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="350dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="16dp"
+                    android:autoText="false"
+                    android:text="Select Category of Issue"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <Spinner
+                    android:id="@+id/spinner1"
+                    android:layout_width="351dp"
+                    android:layout_height="28dp"
+
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginBottom="20dp" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="12dp" />
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="350dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:text="Select Subcategory"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/autoCompleteTextView"
+                    android:layout_width="350dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:enabled="false" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="21dp" />
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="171dp"
+                    android:src="@android:drawable/ic_menu_gallery" />
+
+                <Button
+                    android:id="@+id/cameraButton"
+                    android:layout_width="187dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="95dp"
+                    android:text="Upload Image"
+                    app:cornerRadius="30dp" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="21dp" />
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="351dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:text="Rate this Issue"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="49dp"
+                    android:orientation="horizontal">
+
+                    <SeekBar
+                        android:id="@+id/seekBar"
+                        android:layout_width="294dp"
+                        android:layout_height="37dp"
+                        android:layout_marginLeft="15dp" />
+
+                    <TextView
+                        android:id="@+id/seekBarValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="37dp"
+                        android:layout_weight="1"
+                        android:text="1"
+                        android:textAlignment="center"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="22dp" />
+
+                <Button
+                    android:id="@+id/submitButton"
+                    android:layout_width="312dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="35dp"
+                    android:text="Submit"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+        </ScrollView>
 
         <TextView
             android:id="@+id/text_home"
-            android:layout_width="match_parent"
+            android:layout_width="378dp"
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:textSize="20sp"
-            tools:text="Hello this is a test" />
+            tools:text="Hello this is a test app" />
 
     </LinearLayout>
 
