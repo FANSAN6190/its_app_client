@@ -2,6 +2,7 @@ package com.example.civiceye.ui.home
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -27,6 +28,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.civiceye.databinding.FragmentHomeBinding
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 
@@ -37,6 +40,8 @@ class HomeFragment : Fragment() {
     companion object {
         const val REQUEST_IMAGE_CAPTURE = 1
         const val PERMISSION_REQUEST_CODE = 100
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+        private const val MAP_ACTIVITY_REQUEST_CODE = 107
     }
 
     private lateinit var imageView: ImageView
@@ -46,6 +51,63 @@ class HomeFragment : Fragment() {
         if (result.resultCode == Activity.RESULT_OK) {
             val imageBitmap = result.data?.extras?.get("data") as Bitmap
             imageView.setImageBitmap(imageBitmap)
+        }
+    }
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getLocation()
+            } else {
+                // Permission denied
+            }
+        }
+    }
+    private fun getLocation() {
+        Log.d("HomeFragment", "Getting location...")
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.d("HomeFragment", "Permission granted")
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location ->
+                    if (location != null) {
+                        Log.d("HomeFragment", "Location: ${location.latitude}, ${location.longitude}")
+                        val locationTextView: TextView = binding.locationTextview
+                        locationTextView.text = "Latitude: ${location.latitude}, Longitude: ${location.longitude}"
+                        Toast.makeText(requireContext(), "Location: ${location.latitude}, ${location.longitude}", Toast.LENGTH_LONG).show()
+                    }
+                    else {
+                        Log.d("HomeFragment", "Location is null")
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("HomeFragment", "Error getting location", e)
+                }   
+        } else {
+            // Permission not granted, request it
+            Log.d("HomeFragment", "Permission not granted")
+            requestPermissions(
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+    
+        if (requestCode == MAP_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            val longitude = data?.getDoubleExtra("longitude", 0.0)
+            val latitude = data?.getDoubleExtra("latitude", 0.0)
+        
+            // Handle the selected location
+            val locationTextView: TextView = binding.locationTextview
+            locationTextView.text = "Latitude: $latitude, Longitude: $longitude"
         }
     }
 
@@ -117,6 +179,39 @@ class HomeFragment : Fragment() {
                 takePictureResult.launch(takePictureIntent)
             }
         }
+
+        //Location 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+
+        val locationButton: Button = binding.locationButton
+
+        locationButton.setOnClickListener {
+            // Show a dialog box asking the user to choose between GPS and map
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle("Choose Location Method")
+            builder.setMessage("Do you want to use GPS or select a location on the map?")
+
+            builder.setPositiveButton("GPS") { _, _ ->
+                if (ContextCompat.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    requestPermissions(
+                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                        LOCATION_PERMISSION_REQUEST_CODE
+                    )
+                } else {
+                    getLocation()
+                }
+            }
+            builder.setNegativeButton("Map") { _, _ ->
+                val intent = Intent(requireContext(), MapActivity::class.java)
+                startActivityForResult(intent, MAP_ACTIVITY_REQUEST_CODE)
+            }
+            builder.show()
+        }
+
 
         //slider
         seekBar = binding.seekBar
