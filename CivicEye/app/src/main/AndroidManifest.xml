@@ -19,7 +19,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CivicEye"
+        android:hardwareAccelerated="true"
         tools:targetApi="31">
+
         <activity
             android:name=".ui.home.MapActivity"
             android:exported="false" />

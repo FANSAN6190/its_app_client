@@ -20,6 +20,8 @@ class MapActivity : AppCompatActivity() {
 
         val webView: WebView = binding.mapWebView
         webView.settings.javaScriptEnabled = true
+        webView.settings.domStorageEnabled = true
+        webView.settings.allowUniversalAccessFromFileURLs = true
         webView.loadUrl("file:///android_asset/map1.html")
 
         webView.addJavascriptInterface(object : Any() {

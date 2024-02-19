@@ -1,4 +1,6 @@
 package com.example.civiceye.ui.home
+import java.text.SimpleDateFormat
+import java.util.*
 
 import android.Manifest
 import android.app.Activity
@@ -18,6 +20,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.Spinner
@@ -27,6 +30,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.civiceye.R
 import com.example.civiceye.databinding.FragmentHomeBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -36,6 +40,9 @@ import java.io.ByteArrayOutputStream
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
+    private var latitude: Double = 0.0
+    private var longitude: Double = 0.0
 
     companion object {
         const val REQUEST_IMAGE_CAPTURE = 1
@@ -79,6 +86,8 @@ class HomeFragment : Fragment() {
                         Log.d("HomeFragment", "Location: ${location.latitude}, ${location.longitude}")
                         val locationTextView: TextView = binding.locationTextview
                         locationTextView.text = "Latitude: ${location.latitude}, Longitude: ${location.longitude}"
+                        latitude = location.latitude
+                        longitude = location.longitude  
                         Toast.makeText(requireContext(), "Location: ${location.latitude}, ${location.longitude}", Toast.LENGTH_LONG).show()
                     }
                     else {
@@ -108,11 +117,15 @@ class HomeFragment : Fragment() {
             // Handle the selected location
             val locationTextView: TextView = binding.locationTextview
             locationTextView.text = "Latitude: $latitude, Longitude: $longitude"
+            this.latitude = latitude ?: 0.0
+            this.longitude = longitude ?: 0.0
         }
     }
 
     private lateinit var seekBar: SeekBar
     private lateinit var seekBarValue: TextView
+
+    private lateinit var descriptionEditText: EditText
 
     val categoryToSubcategories = mapOf(
         "Category 1" to listOf("Subcategory 1.1", "Subcategory 1.2", "Subcategory 1.3"),
@@ -163,6 +176,7 @@ class HomeFragment : Fragment() {
         //image capture
         imageView = binding.imageView
         cameraButton = binding.cameraButton
+        imageView.setImageResource(R.drawable.no_photo)
 
         cameraButton.setOnClickListener {
             if (ContextCompat.checkSelfPermission(
@@ -224,6 +238,10 @@ class HomeFragment : Fragment() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
+        //description
+        descriptionEditText = binding.description
+        val description = descriptionEditText.text.toString().ifEmpty { null }
+
         val submitButton: Button = binding.submitButton
         submitButton.setOnClickListener {
             val newSubcategory = subcategoryAutocomplete.text.toString()
@@ -244,11 +262,23 @@ class HomeFragment : Fragment() {
                 >
             */
             //JSON Data
+            val location = JSONObject().apply {
+                put("latitude", latitude)
+                put("longitude", longitude)
+            }
+            val timestamp = System.currentTimeMillis()
+
             val data = JSONObject().apply {
                 put("category", spinner1.selectedItem)
                 put("subcategory", newSubcategory)
                 put("seekBarValue", seekBar.progress)
-                put("image", base64Image) 
+                put("location", location)
+                put("description", description)
+                put("image", base64Image)      
+                put("timestamp", timestamp)  /* val date = Date(timestamp)
+                                                      val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                                                      val dateString = format.format(date)*/
+                
             }
             Log.d("HomeFragment", "Data: $data")
             Toast.makeText(requireContext(), "Data Converted to JSON", Toast.LENGTH_LONG).show()
