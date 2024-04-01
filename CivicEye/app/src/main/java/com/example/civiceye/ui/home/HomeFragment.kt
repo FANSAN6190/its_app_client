@@ -5,6 +5,7 @@ import java.util.*
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -30,10 +31,22 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.civiceye.Constants.BASE_URL
 import com.example.civiceye.R
 import com.example.civiceye.databinding.FragmentHomeBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.Response
+import okhttp3.logging.HttpLoggingInterceptor
+import okio.IOException
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 
@@ -137,8 +150,21 @@ class HomeFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
+        var userId: String? = null;
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        val sharedPref = requireContext().getSharedPreferences("CivicEye", Context.MODE_PRIVATE)
+        if (!sharedPref.contains("userId")) {
+            // User ID not found, generate a new one
+            val userId = UUID.randomUUID().toString()
+            with (sharedPref.edit()) {
+                putString("userId", userId)
+                apply()
+            }
+        } else {
+            userId = sharedPref.getString("userId", "").toString()
+        }
 
         val subcategoryAutocomplete: AutoCompleteTextView = binding.autoCompleteTextView
         val spinner1: Spinner = binding.spinner1
@@ -240,10 +266,11 @@ class HomeFragment : Fragment() {
 
         //description
         descriptionEditText = binding.description
-        val description = descriptionEditText.text.toString().ifEmpty { null }
 
         val submitButton: Button = binding.submitButton
         submitButton.setOnClickListener {
+
+
             val newSubcategory = subcategoryAutocomplete.text.toString()
 
             //image to base64
@@ -251,37 +278,72 @@ class HomeFragment : Fragment() {
             val byteArrayOutputStream = ByteArrayOutputStream()
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
             val byteArray = byteArrayOutputStream.toByteArray()
-            val base64Image = Base64.encodeToString(byteArray, Base64.DEFAULT)
 
-            /*
-                can be converted back to normal image in java using-
-                <
-                    String base64Image = "...";
-                    byte[] decodedString = Base64.decode(base64Image, Base64.DEFAULT);
-                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                >
-            */
-            //JSON Data
+
+            val description = descriptionEditText.text.toString().ifEmpty { null }
+
+            //location and timestamp
             val location = JSONObject().apply {
                 put("latitude", latitude)
                 put("longitude", longitude)
             }
             val timestamp = System.currentTimeMillis()
 
-            val data = JSONObject().apply {
+            //JSON Data
+            val jsonData = JSONObject().apply {
+                put("userId",userId)
                 put("category", spinner1.selectedItem)
                 put("subcategory", newSubcategory)
-                put("seekBarValue", seekBar.progress)
-                put("location", location)
+                put("latitude", latitude)
+                put("longitude", longitude)
                 put("description", description)
-                put("image", base64Image)      
-                put("timestamp", timestamp)  /* val date = Date(timestamp)
-                                                      val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                                                      val dateString = format.format(date)*/
-                
+                put("userRating",seekBarValue.text.toString().toInt())
+                put("timestamp", timestamp)
             }
-            Log.d("HomeFragment", "Data: $data")
+
+            Log.d("HomeFragment", "Data: $jsonData")
             Toast.makeText(requireContext(), "Data Converted to JSON", Toast.LENGTH_LONG).show()
+
+            var strJsonData = jsonData.toString()
+
+            // Multipart request body
+            val requestBody = MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("json", strJsonData)
+                .addFormDataPart("image", "image.png",
+                    RequestBody.create("image/png".toMediaTypeOrNull(), byteArray))
+                .build()
+
+            // Create a POST request
+//            val loggingInterceptor = HttpLoggingInterceptor().apply {
+//                level = HttpLoggingInterceptor.Level.BODY
+//            }
+            val request = Request.Builder()
+                .url("$BASE_URL/api/whistle")
+                .post(requestBody)
+                .build()
+            Log.d("HomeFragment","Request :: ${request.body}")
+
+            // Send the request
+            val client = OkHttpClient()
+//            val client = OkHttpClient.Builder()
+//                .addInterceptor(loggingInterceptor)
+//                .build()
+
+            val call = client.newCall(request)
+            call.enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    Log.d("HomeFragment","IOException :: $e")
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    if (response.isSuccessful) {
+                        Log.d("HomeFragment","Transmission Successful :: $response");
+                    } else {
+                        Log.d("HomeFragment","Transmission Failed :: $response");
+                    }
+                }
+            })
         }
         return root
     }

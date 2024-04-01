@@ -1,4 +1,5 @@
 package com.example.civiceye
+import android.content.Context
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
@@ -7,6 +8,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.civiceye.databinding.ActivityMainBinding
+import java.util.UUID
 
 
 class MainActivity : AppCompatActivity() {
@@ -15,6 +17,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val sharedPref = getSharedPreferences("CivicEye", Context.MODE_PRIVATE)
+        if (!sharedPref.contains("userId")) {
+            // User ID not found, generate a new one
+            val userId = UUID.randomUUID().toString()
+            with (sharedPref.edit()) {
+                putString("userId", userId)
+                apply()
+            }
+        } else {
+            // User ID found, retrieve it
+            val userId = sharedPref.getString("userId", "")
+        }
 
         val navView: BottomNavigationView = binding.navView
 
