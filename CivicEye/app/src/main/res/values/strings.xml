@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">CivicEye</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string-array name="dropdown_options">
+        <item>Option 1</item>
+        <item>Option 2</item>
+        <item>Option 3</item>
+    </string-array>
+
+    <string-array name="subcategory_dropdown_options">
+        <item>Subcategory 1</item>
+        <item>Subcategory 2</item>
+        <item>Subcategory 3</item>
+    </string-array>
+</resources>
