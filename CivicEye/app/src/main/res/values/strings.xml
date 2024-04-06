@@ -3,6 +3,7 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="title_createWhistle">Create Whistle</string>
     <string-array name="dropdown_options">
         <item>Option 1</item>
         <item>Option 2</item>

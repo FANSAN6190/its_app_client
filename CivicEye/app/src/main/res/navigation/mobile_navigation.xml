@@ -12,6 +12,12 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
+        android:id="@+id/create_whistle"
+        android:name="com.example.civiceye.ui.Create.CreateWhistle"
+        android:label="Create Whistle"
+        tools:layout="@layout/create_whistle" />
+
+    <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.example.civiceye.ui.dashboard.DashboardFragment"
         android:label="@string/title_dashboard"
