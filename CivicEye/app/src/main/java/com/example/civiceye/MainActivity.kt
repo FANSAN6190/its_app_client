@@ -8,6 +8,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.civiceye.databinding.ActivityMainBinding
+import com.example.civiceye.ui.Create.LoginDialogFragment
 import java.util.UUID
 
 
@@ -40,5 +41,12 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_home,R.id.create_whistle, R.id.navigation_dashboard, R.id.navigation_notifications))
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+
+        val isLoggedIn = false
+        if (!isLoggedIn) {
+            // If the user is not logged in, show the LoginDialogFragment
+            LoginDialogFragment().show(supportFragmentManager, "loginDialog")
+        }
     }
 }
