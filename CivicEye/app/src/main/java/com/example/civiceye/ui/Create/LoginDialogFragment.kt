@@ -3,6 +3,7 @@ package com.example.civiceye.ui.Create
 import LoginRequest
 import SignupRequest
 import UserService
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -51,6 +52,12 @@ class LoginDialogFragment: DialogFragment()  {
                 if (response.isSuccessful) {
                     // Login successful
                     Toast.makeText(requireContext(), "Login successful :: ${response.body()}", Toast.LENGTH_LONG).show()
+                    // Save the userId in shared preferences
+                    val sharedPref = activity?.getSharedPreferences("CivicEye", Context.MODE_PRIVATE)
+                    with (sharedPref?.edit()) {
+                        this?.putString("userId", userId)
+                        this?.apply()
+                    }
                     dismiss()
                 } else {
                     // Login failed
@@ -68,7 +75,6 @@ class LoginDialogFragment: DialogFragment()  {
                 if (response.isSuccessful) {
                     // Signup successful
                     Toast.makeText(requireContext(), "Signup successful :: ${response.body()}", Toast.LENGTH_LONG).show()
-                    dismiss()
                 } else {
                     // Signup failed
                     Toast.makeText(requireContext(), "Signup failed", Toast.LENGTH_LONG).show()
