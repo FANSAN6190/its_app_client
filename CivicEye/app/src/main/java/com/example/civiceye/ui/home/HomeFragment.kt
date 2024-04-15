@@ -141,9 +141,12 @@ class HomeFragment : Fragment() {
     private lateinit var descriptionEditText: EditText
 
     val categoryToSubcategories = mapOf(
-        "Category 1" to listOf("Subcategory 1.1", "Subcategory 1.2", "Subcategory 1.3"),
-        "Category 2" to listOf("Subcategory 2.1", "Subcategory 2.2", "Subcategory 2.3"),
-        "Category 3" to listOf("Subcategory 3.1", "Subcategory 3.2", "Subcategory 3.3")
+        "Waste dump" to listOf("Organic waste", "Inorganic waste", "E-waste"),
+        "Infrastructure" to listOf("Road", "Building", "Leakage"),
+//        "Something else" to listOf("Subcategory 3.1", "Subcategory 3.2", "Subcategory 3.3")
+        "Something else" to listOf("" +
+                "")
+
     )
     override fun onCreateView(
             inflater: LayoutInflater,

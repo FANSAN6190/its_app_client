@@ -14,7 +14,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+
+    >
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -27,7 +30,7 @@
                 android:layout_height="30dp"
                 android:layout_gravity="center_horizontal"
                 android:autoText="false"
-                android:text="Select Category of Issue"
+                android:text="What is the issue about?"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -44,7 +47,7 @@
                 android:layout_width="350dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Select Subcategory"
+                android:text="Enter a subcategory"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -74,10 +77,6 @@
                 android:text="Upload Image"
                 app:cornerRadius="30dp" />
 
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="21dp" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -90,14 +89,9 @@
                     android:layout_height="wrap_content"
                     android:text="Select Location" />
 
-                <TextView
-                    android:id="@+id/locationTextview"
-                    android:layout_width="238dp"
-                    android:layout_height="40dp"
-                    android:layout_marginLeft="16dp"
-                    android:text="---"
-                    android:textAlignment="center"
-                    android:textSize="16sp" />
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="25dp" />
 
             </LinearLayout>
 
@@ -110,7 +104,7 @@
                 android:layout_width="351dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Rate this Issue"
+                android:text="How serious is the issue?"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -135,13 +129,22 @@
                     android:textAlignment="center"
                     android:textSize="20sp"
                     android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/locationTextview"
+                    android:layout_width="238dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="16dp"
+                    android:text="---"
+                    android:textAlignment="center"
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <TextView
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Description"
+                android:text="Anything else to add?"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -162,7 +165,7 @@
                 android:layout_width="312dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Submit"
+                android:text="Submit!"
                 android:textStyle="bold" />
 
             <Space
