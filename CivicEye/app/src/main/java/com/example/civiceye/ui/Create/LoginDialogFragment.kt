@@ -1,6 +1,5 @@
 package com.example.civiceye.ui.Create
 
-import LoginRequest
 import SignupRequest
 import UserService
 import android.content.Context
@@ -50,15 +49,28 @@ class LoginDialogFragment: DialogFragment()  {
                 val response = userService.login(userId)
 
                 if (response.isSuccessful) {
-                    // Login successful
-                    Toast.makeText(requireContext(), "Login successful :: ${response.body()}", Toast.LENGTH_LONG).show()
-                    // Save the userId in shared preferences
-                    val sharedPref = activity?.getSharedPreferences("CivicEye", Context.MODE_PRIVATE)
-                    with (sharedPref?.edit()) {
-                        this?.putString("userId", userId)
-                        this?.apply()
+                    val success = response.body()?.success
+                    Log.d("LoginDialogFragment","respose from server :: "+response.body())
+                    if(success == true){
+                        // Login successful
+                        Toast.makeText(
+                            requireContext(),
+                            "Login successful}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        // Save the userId in shared preferences
+                        val sharedPref =
+                            activity?.getSharedPreferences("CivicEye", Context.MODE_PRIVATE)
+                        with(sharedPref?.edit()) {
+                            this?.putString("userId", userId)
+                            this?.apply()
+                        }
+                        dismiss()
                     }
-                    dismiss()
+                    else{
+                        // Login failed
+                        Toast.makeText(requireContext(), "Login failed :: Credentials not found", Toast.LENGTH_LONG).show()
+                    }
                 } else {
                     // Login failed
                     Toast.makeText(requireContext(), "Login failed", Toast.LENGTH_LONG).show()
@@ -73,8 +85,18 @@ class LoginDialogFragment: DialogFragment()  {
                 val response = userService.signup(SignupRequest(fullName, userId))
                 Log.d("LoginDialogFragment", "Data: $response")
                 if (response.isSuccessful) {
-                    // Signup successful
-                    Toast.makeText(requireContext(), "Signup successful :: ${response.body()}", Toast.LENGTH_LONG).show()
+                    val success = response.body()?.success;
+                    if(success == true) {
+                        // Signup successful
+                        Toast.makeText(
+                            requireContext(),
+                            "Signup successful :: ${response.body()}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    else{
+                        Toast.makeText(requireContext(), "Signup failed :: No data saved", Toast.LENGTH_LONG).show()
+                    }
                 } else {
                     // Signup failed
                     Toast.makeText(requireContext(), "Signup failed", Toast.LENGTH_LONG).show()
