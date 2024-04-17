@@ -1,5 +1,7 @@
 package com.example.civiceye.ui.home
 
+import java.io.Serializable
+
 data class WhistleData(
     val whistleId: String,
     val category: String,
@@ -9,4 +11,4 @@ data class WhistleData(
     val description: String,
     val userRating: String,
     val timestamp: String
-)
+) : Serializable

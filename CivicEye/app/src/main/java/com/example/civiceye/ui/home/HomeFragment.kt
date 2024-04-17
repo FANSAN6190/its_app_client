@@ -102,7 +102,17 @@ class HomeFragment : Fragment() {
                 selectedRadius = parent.getItemAtPosition(position).toString().toDouble()
                 fetchWhistleData(selectedRadius, selectedCategory) { whistleDataList ->
                     // Update RecyclerView
-                    val adapter = WhistleDataAdapter(whistleDataList)
+                    val adapter = WhistleDataAdapter(whistleDataList) { whistleData ->
+                        val whistleDescriptionFragment = WhistleDescriptionFragment()
+
+                        // Pass whistle data to the fragment
+                        val bundle = Bundle()
+                        bundle.putSerializable("whistleData", whistleData)
+                        whistleDescriptionFragment.arguments = bundle
+
+                        // Show the fragment
+                        whistleDescriptionFragment.show(childFragmentManager, "whistleDescription")
+                    }
                     binding.recyclerView.layoutManager = LinearLayoutManager(context)
                     binding.recyclerView.adapter = adapter
                 }
@@ -118,7 +128,17 @@ class HomeFragment : Fragment() {
                 selectedCategory = parent.getItemAtPosition(position).toString()
                 fetchWhistleData(selectedRadius, selectedCategory) { whistleDataList ->
                     // Update RecyclerView
-                    val adapter = WhistleDataAdapter(whistleDataList)
+                    val adapter = WhistleDataAdapter(whistleDataList) { whistleData ->
+                        val whistleDescriptionFragment = WhistleDescriptionFragment()
+
+                        // Pass whistle data to the fragment
+                        val bundle = Bundle()
+                        bundle.putSerializable("whistleData", whistleData)
+                        whistleDescriptionFragment.arguments = bundle
+
+                        // Show the fragment
+                        whistleDescriptionFragment.show(childFragmentManager, "whistleDescription")
+                    }
                     binding.recyclerView.layoutManager = LinearLayoutManager(context)
                     binding.recyclerView.adapter = adapter
                 }
