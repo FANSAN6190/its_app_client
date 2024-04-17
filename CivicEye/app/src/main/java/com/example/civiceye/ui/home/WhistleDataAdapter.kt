@@ -28,7 +28,7 @@ class WhistleDataAdapter(private val whistleDataList: List<WhistleData>) : Recyc
         val whistleData = whistleDataList[position]
         holder.whistleCategorySubcategory.text = "${whistleData.category} - ${whistleData.subcategory}"
         val timestamp = whistleData.timestamp.toLong()
-        val date = Date(timestamp * 1000L) // Convert seconds to milliseconds
+        val date = Date(timestamp) // Assume timestamp is in milliseconds
         val format = SimpleDateFormat("HH:mm:ss dd-MM-yyyy", Locale.getDefault())
         holder.whistleTime.text = format.format(date)
         holder.whistleUserRating.text = "User Rating: ${whistleData.userRating}"
