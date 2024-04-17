@@ -10,12 +10,19 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class WhistleDataAdapter(private val whistleDataList: List<WhistleData>) : RecyclerView.Adapter<WhistleDataAdapter.ViewHolder>() {
+class WhistleDataAdapter(private val whistleDataList: List<WhistleData>, private val clickListener: (WhistleData) -> Unit) : RecyclerView.Adapter<WhistleDataAdapter.ViewHolder>() {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val whistleCategorySubcategory: TextView = view.findViewById(R.id.whistle_category_subcategory)
         val whistleTime: TextView = view.findViewById(R.id.whistle_time)
         val whistleUserRating: TextView = view.findViewById(R.id.whistle_user_rating)
+        fun bind(whistleData: WhistleData) {
+            // Bind whistle data to views...
+
+            itemView.setOnClickListener {
+                clickListener(whistleData)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -32,7 +39,11 @@ class WhistleDataAdapter(private val whistleDataList: List<WhistleData>) : Recyc
         val format = SimpleDateFormat("HH:mm:ss dd-MM-yyyy", Locale.getDefault())
         holder.whistleTime.text = format.format(date)
         holder.whistleUserRating.text = "User Rating: ${whistleData.userRating}"
+        holder.bind(whistleData)
     }
 
     override fun getItemCount() = whistleDataList.size
+
+
+
 }
