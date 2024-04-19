@@ -7,8 +7,16 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.civiceye.Constants.BASE_URL
 import com.example.civiceye.databinding.ActivityMainBinding
 import com.example.civiceye.ui.Create.LoginDialogFragment
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import java.io.IOException
+import java.net.URL
 
 
 class MainActivity : AppCompatActivity() {
@@ -64,5 +72,47 @@ class MainActivity : AppCompatActivity() {
             // If the user is not logged in, show the LoginDialogFragment
             LoginDialogFragment().show(supportFragmentManager, "loginDialog")
         }
+
+
     }
+
+private fun getIssues(){
+    val client=OkHttpClient();
+    val urlString = "$BASE_URL/api/wstate/upvote/"
+    val url = URL(urlString)
+
+    val request = Request.Builder()
+        .url(url)
+        .get()
+        .build()
+
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            e.printStackTrace()
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            if (!response.isSuccessful) {
+                throw IOException("Unexpected code $response")
+            }
+
+            // handle the response
+
+            val categoryToSubcategories = mapOf(
+                "Category 1" to listOf("Subcategory 1.1", "Subcategory 1.2", "Subcategory 1.3"),
+                "Category 2" to listOf("Subcategory 2.1", "Subcategory 2.2", "Subcategory 2.3"),
+                "Category 3" to listOf("Subcategory 3.1", "Subcategory 3.2", "Subcategory 3.3")
+            )
+
+            val sharedPreferences = requireActivity().getSharedPreferences("com.example.civiceye", Context.MODE_PRIVATE)
+            with(sharedPreferences.edit()) {
+                putString("categoryToSubcategories", categoryToSubcategories)
+                apply()
+            }
+        }
+    })
+}
+
+
 }
