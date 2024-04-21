@@ -72,47 +72,39 @@ class MainActivity : AppCompatActivity() {
             // If the user is not logged in, show the LoginDialogFragment
             LoginDialogFragment().show(supportFragmentManager, "loginDialog")
         }
-
-
+        getIssues()
     }
 
-private fun getIssues(){
-    val client=OkHttpClient();
-    val urlString = "$BASE_URL/api/wstate/upvote/"
-    val url = URL(urlString)
+    private fun getIssues(){
+        val client=OkHttpClient();
+        val urlString = "$BASE_URL/api/whistle/getIssues"
+        val url = URL(urlString)
 
-    val request = Request.Builder()
-        .url(url)
-        .get()
-        .build()
+        val request = Request.Builder()
+            .url(url)
+            .get()
+            .build()
 
 
-    client.newCall(request).enqueue(object : Callback {
-        override fun onFailure(call: Call, e: IOException) {
-            e.printStackTrace()
-        }
-
-        override fun onResponse(call: Call, response: Response) {
-            if (!response.isSuccessful) {
-                throw IOException("Unexpected code $response")
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
             }
 
-            // handle the response
+            override fun onResponse(call: Call, response: Response) {
+                if (!response.isSuccessful) {
+                    throw IOException("Unexpected code $response")
+                }
 
-            val categoryToSubcategories = mapOf(
-                "Category 1" to listOf("Subcategory 1.1", "Subcategory 1.2", "Subcategory 1.3"),
-                "Category 2" to listOf("Subcategory 2.1", "Subcategory 2.2", "Subcategory 2.3"),
-                "Category 3" to listOf("Subcategory 3.1", "Subcategory 3.2", "Subcategory 3.3")
-            )
+                val categoryToSubcategories = response.body.string()
+                println(categoryToSubcategories);
 
-            val sharedPreferences = requireActivity().getSharedPreferences("com.example.civiceye", Context.MODE_PRIVATE)
-            with(sharedPreferences.edit()) {
-                putString("categoryToSubcategories", categoryToSubcategories)
-                apply()
+                val sharedPreferences = this@MainActivity.getSharedPreferences("com.example.civiceye", Context.MODE_PRIVATE)
+                with(sharedPreferences.edit()) {
+                    putString("categoryToSubcategories",categoryToSubcategories)
+                        .apply()
+                }
             }
-        }
-    })
-}
-
-
+        })
+    }
 }

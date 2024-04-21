@@ -40,6 +40,8 @@ import com.example.civiceye.R
 import com.example.civiceye.databinding.FragmentHomeBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType
@@ -85,7 +87,9 @@ class HomeFragment : Fragment() {
         radiusSpinner.setSelection(defaultRadiusIndex)
 
         // Populate categorySpinner with predefined categories
-        val categories = arrayOf("","Category 1", "Category 2", "Category 3") // Replace with your actual categories
+        var categories = arrayOf("","Category 1", "Category 2", "Category 3")
+        categories += getCategoriesFromSharedPref();
+
         val categoryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
         categorySpinner.adapter = categoryAdapter
 
@@ -266,5 +270,18 @@ class HomeFragment : Fragment() {
             return Pair(latitude, longitude)
         }
         return null
+    }
+
+    private fun getCategoriesFromSharedPref(): Array<String> {
+        val sharedPref = requireContext().getSharedPreferences("com.example.civiceye", Context.MODE_PRIVATE)
+        val sharedCTS = sharedPref.getString("categoryToSubcategories", null)
+        val categories = mutableListOf<String>()
+        if (sharedCTS != null) {
+            val gson = Gson()
+            val type = object : TypeToken<Map<String, List<String>>>() {}.type
+            val categoryToSubcategories: Map<String, List<String>> = gson.fromJson(sharedCTS, type)
+            categories.addAll(categoryToSubcategories.keys)
+        }
+        return categories.toTypedArray()
     }
 }

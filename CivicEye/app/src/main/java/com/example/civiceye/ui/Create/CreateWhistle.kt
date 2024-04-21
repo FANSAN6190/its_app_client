@@ -1,10 +1,12 @@
 package com.example.civiceye.ui.Create
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -35,6 +37,8 @@ import com.example.civiceye.ui.home.HomeFragment
 import com.example.civiceye.ui.home.MapActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -72,6 +76,9 @@ class CreateWhistle : Fragment() {
         }
     }
 
+    private lateinit var sharedPref: SharedPreferences
+    private var sharedCTS: String? = null
+
 
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -83,6 +90,7 @@ class CreateWhistle : Fragment() {
             }
         }
     }
+    @SuppressLint("SetTextI18n")
     private fun getLocation() {
         Log.d("HomeFragment", "Getting location...")
         if (ContextCompat.checkSelfPermission(
@@ -118,6 +126,7 @@ class CreateWhistle : Fragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -138,11 +147,7 @@ class CreateWhistle : Fragment() {
 
     private lateinit var descriptionEditText: EditText
 
-    val categoryToSubcategories = mapOf(
-        "Category 1" to listOf("Subcategory 1.1", "Subcategory 1.2", "Subcategory 1.3"),
-        "Category 2" to listOf("Subcategory 2.1", "Subcategory 2.2", "Subcategory 2.3"),
-        "Category 3" to listOf("Subcategory 3.1", "Subcategory 3.2", "Subcategory 3.3")
-    )
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -152,6 +157,12 @@ class CreateWhistle : Fragment() {
         var userId: String? = null;
         _binding = CreateWhistleBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        sharedPref = requireContext().getSharedPreferences("com.example.civiceye", Context.MODE_PRIVATE)
+        sharedCTS = sharedPref.getString("categoryToSubcategories", null)
+        val gson = Gson()
+        val type = object : TypeToken<Map<String, List<String>>>() {}.type
+        val categoryToSubcategories: Map<String, List<String>> = gson.fromJson(sharedCTS, type)
 
         val sharedPref = requireContext().getSharedPreferences("CivicEye", Context.MODE_PRIVATE)
         if (!sharedPref.contains("userId")) {
@@ -166,6 +177,13 @@ class CreateWhistle : Fragment() {
         }
 
         val subcategoryAutocomplete: AutoCompleteTextView = binding.autoCompleteTextView
+        subcategoryAutocomplete.threshold=0
+        subcategoryAutocomplete.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                (v as? AutoCompleteTextView)?.showDropDown()
+            }
+        }
+
         val spinner1: Spinner = binding.spinner1
         val categories = categoryToSubcategories.keys.toList()
         spinner1.setSelection(0)
